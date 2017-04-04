@@ -50,6 +50,7 @@ class UserDetail extends React.Component {
   }
 
   onSubmit(event) {
+    console.log(this.props)
     event.preventDefault();
     const { addStory, user } = this.props;
     const story = {
