@@ -6,7 +6,7 @@ var path = require('path');
 // "Enhancing" middleware (does not send response, server-side effects only)
 
 app.use(require('./logging.middleware'));
-
+app.use(require('./session.middleware'))
 app.use(require('./body-parsing.middleware'));
 
 
