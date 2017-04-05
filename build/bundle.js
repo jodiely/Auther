@@ -25990,7 +25990,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.signupUser = exports.loginUser = undefined;
+	exports.logoutUser = exports.signupUser = exports.loginUser = undefined;
 	exports.default = reducer;
 	
 	var _axios = __webpack_require__(219);
@@ -26003,6 +26003,7 @@
 	
 	var LOGIN = 'LOGIN_USER';
 	var SIGNUP = 'SIGNUP_USER';
+	var LOGOUT = 'LOGOUT_USER';
 	
 	/* ------------   ACTION CREATORS     ------------------ */
 	
@@ -26011,6 +26012,9 @@
 	};
 	var signup = function signup(user) {
 	  return { type: SIGNUP, user: user };
+	};
+	var logout = function logout() {
+	  return { type: LOGOUT };
 	};
 	
 	/* ------------       REDUCER     ------------------ */
@@ -26026,6 +26030,9 @@
 	
 	    case SIGNUP:
 	      return action.user;
+	
+	    case LOGOUT:
+	      return action;
 	
 	    default:
 	      return user;
@@ -26046,6 +26053,14 @@
 	  return function (dispatch) {
 	    _axios2.default.post('/api/signup', user).then(function (res) {
 	      return dispatch(signup(res.data));
+	    });
+	  };
+	};
+	
+	var logoutUser = exports.logoutUser = function logoutUser() {
+	  return function (dispatch) {
+	    _axios2.default.get('/api/logout').then(function (res) {
+	      return dispatch(logout());
 	    });
 	  };
 	};
@@ -31744,6 +31759,8 @@
 	
 	var _reactRouter = __webpack_require__(247);
 	
+	var _auth = __webpack_require__(245);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -31863,11 +31880,15 @@
 	          'li',
 	          null,
 	          _react2.default.createElement(
-	            'button',
-	            {
-	              className: 'navbar-btn btn btn-default',
-	              onClick: this.props.logout },
-	            'logout'
+	            _reactRouter.Link,
+	            { to: '/logout' },
+	            _react2.default.createElement(
+	              'button',
+	              {
+	                className: 'navbar-btn btn btn-default',
+	                onClick: this.props.logout },
+	              'logout'
+	            )
 	          )
 	        )
 	      );
@@ -31885,6 +31906,7 @@
 	  return {
 	    logout: function logout() {
 	      console.log('You signed out. Sorta.');
+	      dispatch((0, _auth.logoutUser)());
 	      _reactRouter.browserHistory.push('/');
 	    }
 	  };
@@ -32206,7 +32228,6 @@
 	      var loginUser = this.props.loginUser;
 	
 	      console.log("props when submitting: ", this.props);
-	
 	      loginUser({
 	        email: event.target.email.value,
 	        password: event.target.password.value
@@ -32733,13 +32754,13 @@
 	          _react2.default.createElement(
 	            'div',
 	            { className: 'media-right media-middle' },
-	            _react2.default.createElement(
+	            user.isAdmin ? _react2.default.createElement(
 	              'button',
 	              {
 	                className: 'btn btn-default',
 	                onClick: this.removeUserCallback },
 	              _react2.default.createElement('span', { className: 'glyphicon glyphicon-remove' })
-	            )
+	            ) : null
 	          )
 	        )
 	      );
@@ -32764,8 +32785,9 @@
 	/* -----------------    CONTAINER     ------------------ */
 	
 	var mapState = function mapState(_ref) {
-	  var stories = _ref.stories;
-	  return { stories: stories };
+	  var stories = _ref.stories,
+	      user = _ref.user;
+	  return { stories: stories, user: user };
 	};
 	
 	var mapDispatch = { removeUser: _users.removeUser, removeStory: _stories.removeStory };

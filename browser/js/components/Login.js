@@ -62,7 +62,6 @@ class Login extends React.Component {
     event.preventDefault();
     const { loginUser } = this.props;
     console.log("props when submitting: ", this.props)
-
     loginUser({
       email: event.target.email.value, 
       password: event.target.password.value
